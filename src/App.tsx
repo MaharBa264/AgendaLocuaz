@@ -19,6 +19,7 @@ function localDatetime(date: Date) {
 async function googleRequest<T>(token: string, url: string, init?: RequestInit): Promise<T> {
  const response=await fetch(url,{...init,headers:{Authorization:`Bearer ${token}`,...(init?.body?{'Content-Type':'application/json'}:{})}});
  if(!response.ok) { const detail=await response.json().catch(()=>null) as {error?:{message?:string}}|null; throw new Error(detail?.error?.message ?? `Google API: error ${response.status}`); }
+ if(response.status===204)return undefined as T;
  return response.json() as Promise<T>;
 }
 export default function App() {
