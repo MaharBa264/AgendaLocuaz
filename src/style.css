@@ -18,3 +18,11 @@
 .event-dialog label{display:flex;flex-direction:column;gap:7px;margin:15px 0}
 .event-dialog input,.event-dialog textarea{display:block;width:100%;min-width:0}
 @media(max-width:700px){.dialog-backdrop{align-items:flex-end!important;padding:0!important}.dialog-backdrop .event-dialog{width:100%!important;max-height:94dvh!important;border-radius:22px 22px 0 0!important;padding:22px 18px 30px!important}.dialog-actions{position:sticky;bottom:0;background:white;padding:12px 0}.composer .mic{flex:0 0 auto}}
+
+.list-entries{display:grid;gap:10px;margin-top:16px}
+.list-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid #e5e8f0;border-radius:13px;padding:15px 18px}
+.list-entry label{display:flex;align-items:center;gap:13px;flex:1;min-width:0;overflow-wrap:anywhere;cursor:pointer}
+.list-entry input{accent-color:#705cdb;width:19px;height:19px;flex-shrink:0}
+.list-entry.completed span{text-decoration:line-through;color:#9aa5b6}
+.list-entry button{border:0;background:#f7f5ff;border-radius:9px;padding:9px 12px;color:#6a5bc4;font-size:12px}
+.list-entry button:disabled{opacity:.5}
