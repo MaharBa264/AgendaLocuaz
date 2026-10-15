@@ -1,34 +1,31 @@
-# Contrato de arquitectura v1 — 2026-10-14
+# Agenda Locuaz — Contrato de arquitectura local-first v2 (2026-10-14)
 
-## Decisiones aprobadas
-PWA, Supabase, interpretación híbrida, voz nativa/disponible en dispositivo, recordatorios adaptativos, espacios colaborativos, offline básico, Cloudflare.
+## Decisión aprobada
+Cada usuario controla sus datos en su cuenta de Google. No existe una base de datos central de agendas administrada por el desarrollador. Supabase queda descartado del núcleo. Esta decisión sustituye el contrato v1.
 
-## Componentes
-- React + TypeScript + Vite + Tailwind; TanStack Query para consultas, Zustand para estado UI.
-- Dexie/IndexedDB para caché y cola de cambios pendientes; service worker para assets.
-- Supabase Auth con Google OAuth, PostgreSQL con RLS en todas las tablas privadas.
-- Cloudflare Pages para el frontend y Functions para interpretación asistida por IA y otras operaciones privilegiadas.
-- Parser de fechas, recurrencias y entidades determinista con pruebas; salida tipada validada con Zod.
-- Voz por APIs del navegador/dispositivo donde estén disponibles, con fallback manual. No se garantiza reconocimiento offline.
+## Plataforma
+React + TypeScript + Vite, PWA alojada en Cloudflare Pages. IndexedDB como almacenamiento local y cola de sincronización. La instalación PWA, uso offline y soporte de voz varían por navegador.
 
-## Modelo inicial
-profiles, spaces, memberships, dependents, calendars, events, event_recurrences, tasks, lists, list_items, reminder_preferences, reminders, device_subscriptions, sync_operations.
-Cada entidad privada pertenece a usuario o espacio. Dependents son perfiles sin login; no son cuentas autenticadas.
+## Identidad y acceso
+Google Identity Services y OAuth 2.0 Authorization Code + PKCE cuando corresponda. Solicitar scopes incrementales y mínimos; tokens protegidos y no guardados en repositorios. Configurar pantalla de consentimiento, dominios y orígenes autorizados. Algunas scopes de Drive pueden exigir verificación adicional de Google; evaluar appDataFolder y sus limitaciones antes de cerrar scopes.
 
-## Autorización
-Roles de espacio: owner, editor, viewer. RLS comprueba membresía activa y acceso al recurso. No confiar en IDs aportados por el cliente sin autorización. Las claves de servicio nunca salen del servidor.
+## Datos
+- Google Calendar API: eventos, recurrencias, calendarios personales y compartidos, alertas de eventos. La colaboración se realiza mediante permisos nativos de Google Calendar.
+- IndexedDB: copia local, operaciones pendientes y datos de UI.
+- Google Drive API: documentos estructurados versionados de tareas, compras, perfiles dependientes y preferencias. Preferir appDataFolder para datos privados; no sirve como espacio compartido. Para listas compartidas, evaluar archivos normales de Drive con permisos y conflictos o alternativa Google Tasks/Calendar; decisión abierta y requiere prototipo.
+- Formato exportable JSON versionado, sin dependencia del esquema de un backend propio.
 
-## Fechas y horarios
-Guardar instantes en UTC y zona horaria IANA del evento (por defecto America/Argentina/San_Luis configurable). Reglas de recurrencia en horario local; resolver excepciones, cancelaciones y horario de verano.
-
-## Offline
-Lectura y creación/edición básica offline. Cola con IDs estables, idempotencia y estado de sincronización visible. Resolver conflictos con estrategia explícita por entidad; evitar pérdida silenciosa. Permisos revocados bloquean la sincronización.
-
-## Interpretación
-Primero reglas locales. Si hay ambigüedad, mostrar confirmación o solicitar aclaración. IA opcional bajo consentimiento y límites de uso; nunca ejecutar operaciones inferidas sin confirmación. No enviar información personal innecesaria al proveedor.
+## Sincronización
+Adaptadores separados CalendarRepository, DriveRepository y LocalRepository. Usar sync tokens/ETags cuando estén disponibles, IDs estables, reintentos, backoff y detección de conflictos. Evitar sobrescritura silenciosa. Modo offline con estado visible.
 
 ## Recordatorios
-Preferencias por usuario/categoría y evento; anticipaciones sugeridas 24 h, 6 h, 1 h, editables. Aprendizaje inicial por preferencias explícitas y ajustes observados, sin modelo entrenado. Programador del lado servidor y push web; evaluar límites de PWA Android, permisos, disponibilidad y entrega no garantizada. Idempotencia, cancelación y reprogramación al editar eventos.
+Eventos: recordatorios configurados en Google Calendar, cuya entrega depende de Google y de las preferencias del usuario. Tareas: recordatorios locales mientras la plataforma lo permita; NO prometer alarmas garantizadas con PWA cerrada sin servicio push/backend. Investigar alternativas como evento auxiliar en Calendar con consentimiento.
 
-## Decisiones técnicas abiertas
-Proveedor de IA y cuota; estrategia de jobs programados; esquema de conflictos offline; política de retención; entorno de staging y producción; credenciales OAuth y push. No bloquear el hito 1 por estas decisiones.
+## Lenguaje natural
+Parser determinista español argentino, validación de fechas/zonas horarias y confirmación previa. IA externa opcional solo con consentimiento, límites de uso y tratamiento explícito de privacidad. Voz del dispositivo cuando esté disponible, con alternativa escrita.
+
+## Privacidad
+Sin base central del operador; sin embargo, Google procesa y aloja datos y el operador de la web puede desplegar código que accede a datos autorizados: no prometer cifrado extremo a extremo ni independencia absoluta de terceros. Exportar y desconectar cuenta. Scopes mínimos, revocación y borrado local.
+
+## No configurado
+Google Cloud OAuth, Calendar API, Drive API, Cloudflare Pages, pruebas de permisos y sincronización. El código Supabase en la rama de prototipo se considera obsoleto y debe retirarse antes del merge.

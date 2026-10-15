@@ -1,28 +1,24 @@
-# MVP y criterios de aceptación
+# MVP local-first — Agenda Locuaz
 
-## Producto
-Agenda personal primero; grupos opcionales para familia o trabajo.
+1. Inicio de sesión Google con permisos incrementales.
+2. Vista de agenda día/semana/mes usando Calendar API.
+3. Crear/editar/cancelar eventos y recurrencias, con confirmación de interpretación.
+4. Usar calendarios compartidos con permisos nativos de Google.
+5. Tareas y compras locales, sincronizadas con Drive propio mediante archivos versionados.
+6. Perfiles dependientes como metadatos de usuario, sin cuentas propias.
+7. Entrada por texto y voz cuando el dispositivo lo permita.
+8. Recordatorios de eventos mediante Calendar; avisos de tareas sujetos a limitaciones PWA.
+9. Offline de lectura y cambios pendientes con detección de conflictos.
+10. Exportación JSON y desconexión.
 
-## Funciones
-1. Inicio de sesión Google y perfil.
-2. Vistas de calendario día/semana/mes; eventos y recurrencias.
-3. Tareas, listas de compras y marcado de completado.
-4. Espacios privados/compartidos, invitaciones y roles.
-5. Dependientes (hijos sin cuenta propia), asociados a espacios.
-6. Entrada por texto y voz cuando el dispositivo lo permita; parser híbrido con revisión previa.
-7. Recordatorios configurables/adaptativos y notificaciones push autorizadas.
-8. Caché offline y cola de cambios con sincronización posterior.
+## Criterios de aceptación
+- Un usuario ve solo calendarios y archivos para los que autorizó acceso.
+- Un evento creado aparece en Google Calendar y en otro dispositivo.
+- Un evento compartido respeta los permisos nativos del calendario.
+- Una lista privada se sincroniza sin perder cambios concurrentes.
+- Sin conexión se muestran datos cacheados y cambios pendientes, claramente identificados.
+- No se guarda ninguna interpretación ambigua sin confirmación.
+- Se documentan límites de recordatorios con la PWA cerrada.
 
-## Aceptación funcional
-- Un usuario crea evento y tarea y los ve desde dos dispositivos.
-- Un usuario sin membresía no puede leer ni modificar datos ajenos (pruebas RLS).
-- Una invitación aceptada concede solo el rol previsto.
-- Una frase como 'el martes que viene a las 17 llevar a Martina a hockey, avisame un día antes' produce una propuesta verificable, no un guardado automático.
-- Una frase ambigua solicita confirmación y no inventa datos.
-- Un evento recurrente admite edición de una instancia sin alterar toda la serie.
-- Un cambio offline se sincroniza al reconectar sin duplicados; un conflicto se muestra.
-- Al editar/cancelar evento, sus recordatorios pendientes se actualizan/cancelan.
-- Los recordatorios no se prometen a una hora exacta: dependen de permisos y entrega push.
-
-## Fuera de alcance inicial
-Sincronización bidireccional Google Calendar, WhatsApp, asistentes autónomos, aprendizaje opaco y Android Kotlin separado.
+## Fuera de alcance
+Base Supabase central, chat autónomo, WhatsApp, Android Kotlin separado, garantía de alarmas exactas con PWA cerrada.

@@ -1,0 +1,11 @@
+{
+  "name": "Agenda Locuaz",
+  "short_name": "Locuaz",
+  "description": "Tu agenda personal y compartida",
+  "lang": "es-AR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f8fb",
+  "theme_color": "#f7f8fb",
+  "icons": []
+}
